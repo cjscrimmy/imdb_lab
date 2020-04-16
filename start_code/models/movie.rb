@@ -7,8 +7,8 @@ class Movie
 
     def initialize( options )
         @id = options['id'].to_i if options['id']
-        @name = options['title']
-        @category = options['genre']
+        @title = options['title']
+        @genre = options['genre']
     end
 
     def save()
@@ -39,4 +39,15 @@ class Movie
         SqlRunner.run(sql)
     end
 
+    def stars()
+        sql = "SELECT stars.*
+        FROM stars
+        INNER JOIN castings
+        ON castings.star_id = stars.id
+        WHERE castings.movie_id = $1"
+        values = [@id]
+        stars = SqlRunner.run(sql, values)
+        result = stars.map {|star| Star.new(star)}
+        return result
+    end
 end
